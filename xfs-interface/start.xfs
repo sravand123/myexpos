@@ -1,4 +1,0 @@
-load --init ../expl/expl_progs/squares.xsm
-load --int=10 ../spl/spl_progs/halt_prog.xsm
-load --exhandler ../spl/spl_progs/halt_prog.xsm
-load --os ../spl/spl_progs/os_startup.xsm

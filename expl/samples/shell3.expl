@@ -1,0 +1,19 @@
+int main()
+{
+decl
+    int temp,num,retval;
+    string file;
+enddecl
+begin
+    retval = exposcall("Fork");
+    if(retval!=0) then
+    read(file);
+    temp = exposcall("Exec",file);
+    endif;
+    if(retval==0)then
+    read(file);
+    temp = exposcall("Exec",file);
+    endif;
+    return 0;
+end
+}

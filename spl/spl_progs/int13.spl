@@ -1,0 +1,84 @@
+alias userSP R0;
+alias syscall  R1;
+userSP = SP;
+
+syscall = [[PTBR + 2 * ((userSP - 5) / 512)] * 512 + (userSP - 5) % 512];
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13] =SP;
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 9] =syscall;
+SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 11]*512 -1;
+
+
+//semget
+if(syscall==17) then
+   alias perprocesstable R2;
+   perprocesstable = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11]*512+496;
+   alias counter R3;
+   counter =0;
+   while(counter<8) do
+        if([perprocesstable+2*counter]==-1) then
+           [perprocesstable+2*counter]=1;
+           break;
+        endif;
+   counter =counter+2;
+   endwhile;
+
+   if(counter==8)then
+      [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=-1;
+      [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 9]=0;
+      SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
+      ireturn;
+   endif;
+   multipush(R0,R1,R2,R3);
+   R1 = 6;
+   R2 = [SYSTEM_STATUS_TABLE+1];
+   call RESOURCE_MANAGER;
+   alias semtableindex R4;
+   semtableindex = R0;
+   multipop(R0,R1,R2,R3);
+   if(semtableindex==-1) then
+      [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=-2;
+      [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 9]=0;
+      SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
+      ireturn;
+   endif;
+   [perprocesstable+2*counter+1]=semtableindex;
+   [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=counter;
+   [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 9]=0;
+   SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
+   ireturn;
+endif;
+
+
+//semrelease
+if(syscall==18) then
+   alias semdisc R2;
+   semdisc = [[PTBR + 2 * ((userSP - 4) / 512)] * 512 + (userSP - 4) % 512];
+    alias perprocesstable R3;
+    perprocesstable = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11]*512+496;
+   
+   if(semdisc<0 || semdisc >7 || [perprocesstable+2*semdisc]!=1) then
+
+       [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=-1;
+       [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 9]=0;
+       SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
+       ireturn;
+   endif;
+
+   multipush(R0,R1,R2,R3);
+   R1 = 7;
+   R2 = semdisc;
+   R3 = [SYSTEM_STATUS_TABLE+1];
+   call RESOURCE_MANAGER;
+   multipop(R0,R1,R2,R3);
+   [perprocesstable+2*semdisc+0]=-1;
+   [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=0;
+   [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 9]=0;
+   SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
+   ireturn;
+endif;
+   
+   
+   
+   
+   
+

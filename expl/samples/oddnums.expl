@@ -4,13 +4,16 @@ decl
     int temp,num,odd;
 enddecl
 begin
+    breakpoint;
     num=0;
     while ( num < 50 ) do
          odd = 2*num +1;
-         breakpoint;
+
          temp = exposcall ( "Write" , -2, odd);
          num = num + 1;
     endwhile;
+    temp=exposcall("Signal");
+    breakpoint;
     return 0;
 end
 }

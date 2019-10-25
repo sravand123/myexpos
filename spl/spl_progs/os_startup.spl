@@ -3,7 +3,7 @@ loadi(55,68);
 loadi(69,11);
 loadi(70,12);
 SP = 82*512-1;
-call BOOT_MODULE;
+call MOD_7;
 PTBR = PAGE_TABLE_BASE;
 PTLR =10;
 
@@ -46,6 +46,8 @@ PTLR =10;
 [PROCESS_TABLE +15] = 10;
 [SYSTEM_STATUS_TABLE + 1] = 0;
 [81 * 512] = [69*512 + 1];
+
+
 SP=8*512;
 
 ireturn;

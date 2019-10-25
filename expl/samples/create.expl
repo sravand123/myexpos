@@ -1,0 +1,14 @@
+int main()
+{
+decl
+    int temp,permission;
+    str file;
+enddecl
+begin  
+read(permission);
+    read(file);
+    temp = exposcall("Create",file,permission);
+    breakpoint;
+    return 0;
+end
+}

@@ -6,11 +6,44 @@ loadi(16,29);
 loadi(17,30);
 loadi(22,35);
 loadi(23,36);
+loadi(50,63);
+loadi(51,64);
 loadi(63,13);
 loadi(64,14);
 loadi(65,7);
 loadi(66,8);
-
+loadi(40,53);
+loadi(41,54);
+loadi(48,61);
+loadi(49,62);
+loadi(14,27);
+loadi(15,28);
+loadi(8,21);
+loadi(9,22);
+loadi(20,33);
+loadi(21,34);
+loadi(42,55);
+loadi(43,56);
+loadi(44,57);
+loadi(45,58);
+loadi(59,3);
+loadi(60,4);
+loadi(6,19);
+loadi(7,20);
+loadi(61,2);
+loadi(18,31);
+loadi(19,32);
+loadi(24,37);
+loadi(25,38);
+loadi(32,45);
+loadi(33,46);
+loadi(28,41);
+loadi(29,42);
+loadi(30,43);
+loadi(31,44);
+loadi(10,23);
+loadi(11,24);
+loadi(62,5);
 
 PTBR = PAGE_TABLE_BASE + 20;
 PTLR = 10;
@@ -38,6 +71,7 @@ PTLR = 10;
 
 
 [PROCESS_TABLE +17] = 1;
+[PROCESS_TABLE+19]=1;
 [PROCESS_TABLE +20] = CREATED;
 [PROCESS_TABLE +27] = 80;
 [PROCESS_TABLE +28] = 0;
@@ -45,7 +79,74 @@ PTLR = 10;
 [PROCESS_TABLE +30] = PAGE_TABLE_BASE+20;
 [PROCESS_TABLE +31] = 10;
 [76*512] = [65 * 512 + 1];
-breakpoint;
+
+
+[DISK_MAP_TABLE+2]=[PTBR+4];
+[DISK_MAP_TABLE+3]=[PTBR+6];
+[DISK_MAP_TABLE+4]=[PTBR+8];
+[DISK_MAP_TABLE+5]=[PTBR+10];
+[DISK_MAP_TABLE+6]=[PTBR+12];
+[DISK_MAP_TABLE+7]=[PTBR+14];
+[DISK_MAP_TABLE+8]=[PTBR+16];
+[DISK_MAP_TABLE+9]=[PTBR+18];
+
+
+
+alias counter R14;
+counter = ((PTBR-PAGE_TABLE_BASE)/20)+1;
+while(counter < MAX_PROC_NUM)do
+      [PROCESS_TABLE+(counter*16)+4] = TERMINATED;
+      counter = counter +1;
+endwhile;                    
+
+counter=0;
+while(counter<83) do 
+     [MEMORY_FREE_LIST+counter]=1;
+counter =counter+1;
+endwhile;
+
+
+[MEMORY_FREE_LIST+63] =2;
+[MEMORY_FREE_LIST+64] =2;
+
+
+//Initialize per-process resource table                                                   
+counter = 496;                                                            
+while(counter < 512) do                                                   
+    [[PROCESS_TABLE+27] * 512 + counter] = -1;                        
+    [[PROCESS_TABLE+27] * 512 + counter + 1] = -1;                       
+    counter = counter + 2;
+endwhile;
+
+
+counter=0;
+while(counter<32) do 
+     [SEMAPHORE_TABLE+counter*4+0]=-1;
+     [SEMAPHORE_TABLE+counter*4+1]=0;
+counter=counter+1;
+endwhile;
+
+counter =0;
+while(counter<60) do
+    [FILE_STATUS_TABLE+counter*4+0]=-1;
+    [FILE_STATUS_TABLE+counter*4+1]=-1;
+    [FILE_STATUS_TABLE+counter*4+2]=-1;
+    [FILE_STATUS_TABLE+counter*4+3]=-1;
+counter = counter+1;
+endwhile;
+
+counter = 0;
+while(counter<4)do
+  [BUFFER_TABLE+counter*4+0]=-1;
+  [BUFFER_TABLE+counter*4+1]=-1;
+  [BUFFER_TABLE+counter*4+2]=-1;
+  [BUFFER_TABLE+counter*4+3]=-1;  
+counter = counter+1;
+endwhile;    
+[SYSTEM_STATUS_TABLE+2]=45;
+[SYSTEM_STATUS_TABLE+3]=0;
+[TERMINAL_STATUS_TABLE+0]=0;
+[DISK_STATUS_TABLE+0]=0;
 return;
 
 

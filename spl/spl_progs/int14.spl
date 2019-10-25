@@ -1,0 +1,77 @@
+alias userSP R0;
+alias syscall  R1;
+userSP = SP;
+
+syscall = [[PTBR + 2 * ((userSP - 5) / 512)] * 512 + (userSP - 5) % 512];
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13] =SP;
+SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 11]*512 -1;
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 9] =syscall;
+
+if(syscall == 19)then
+  alias semdisc R2;
+  semdisc = [[PTBR+2*(userSP-4)/512]*512+(userSP-4)%512];
+  
+  alias perprocesstable R3;
+  alias processtable R4;
+  processtable = PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16;
+  perprocesstable = [processtable+11]*512+496;
+   if(semdisc<0 || semdisc >7 || [perprocesstable+2*semdisc]!=1) then
+       [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=-1;
+       [processtable+ 9]=0;
+       SP = [processtable+13];
+       ireturn;
+   endif;
+   alias semtableindex R5;
+   semtableindex  = [perprocesstable+2*semdisc+1];
+   while([SEMAPHORE_TABLE+semtableindex*4+0]!=[SYSTEM_STATUS_TABLE+1] && [SEMAPHORE_TABLE+semtableindex*4+0]!=-1) do
+         [processtable+4] = WAIT_SEMAPHORE;
+         [processtable+5] = semtableindex;
+          multipush(R0,R1,R2,R3,R4,R5);
+          call MOD_5;
+          multipop(R0,R1,R2,R3,R4,R5);
+    endwhile;
+   [SEMAPHORE_TABLE+semdisc*4+0 ] = [SYSTEM_STATUS_TABLE+1];
+   [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=0;
+   [processtable+ 9]=0;
+   SP = [processtable+13];
+   ireturn;
+endif;
+
+if(syscall ==20) then
+   alias semdisc R2;
+  semdisc = [[PTBR+2*(userSP-4)/512]*512+(userSP-4)%512];
+  
+  alias perprocesstable R3;
+  alias processtable R4;
+  processtable = PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16;
+  perprocesstable = [processtable+11]*512+496;
+   if(semdisc<0 || semdisc >7 || [perprocesstable+2*semdisc]!=1) then
+       [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=-1;
+       [processtable+ 9]=0;
+       SP = [processtable+13];
+       ireturn;
+   endif;
+   alias semtableindex R5;
+   semtableindex  = [perprocesstable+2*semdisc+1];
+   if([SEMAPHORE_TABLE+semtableindex*4+0]!=-1) then
+   if([SEMAPHORE_TABLE+semtableindex*4+0]!=[SYSTEM_STATUS_TABLE+1])then  
+      [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=-2;
+       [processtable+ 9]=0;
+       SP = [processtable+13];
+       ireturn;
+   endif;
+   [SEMAPHORE_TABLE+semtableindex*4+0]=-1;
+   alias counter R6;   
+   counter=0;
+   while(counter<16) do 
+      if([PROCESS_TABLE+counter*16+4]==WAIT_SEMAPHORE  && [PROCESS_TABLE+counter*16+5]==semtableindex) then
+          [PROCESS_TABLE+counter*16+4]=READY;
+      endif;
+     counter=counter+1;
+   endwhile;
+   endif;
+   [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512]=0;
+   [processtable+ 9]=0;
+   SP = [processtable+13];
+   ireturn;
+endif;   

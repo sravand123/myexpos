@@ -1,0 +1,159 @@
+alias userSP R0;
+alias syscall  R1;
+userSP = SP;
+
+syscall = [[PTBR + 2 * ((userSP - 5) / 512)] * 512 + (userSP - 5) % 512];
+alias filename R4;
+alias retval R7;
+alias processtable R9;
+processtable = PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16;
+retval = [PTBR+2*(userSP-1)/512]*512 + (userSP -1)%512;
+filename = [[PTBR+2*(userSP-4)/512]*512 + (userSP -4)%512];
+[processtable+13] =SP;
+[processtable + 9] =syscall;
+SP = [processtable+ 11]*512 -1;
+
+if(syscall==1)then
+   alias counter R2;
+   counter= 0;
+   while(counter<60)do
+        if([INODE_TABLE+counter*16+1]==filename && [INODE_TABLE+counter*16+0]==DATA) then
+            [retval]=0;
+            [processtable + 9]=0;
+            SP =[processtable+13];
+            ireturn;
+        endif;
+  counter = counter+1;
+  endwhile;
+  counter = 0;
+  alias freentry R3;
+  while(counter<60) do
+       if([INODE_TABLE+counter*16+1]==-1) then
+           freentry= counter;
+           break;
+       endif;
+  counter =  counter+1;    
+  endwhile;
+  if(counter==60) then
+    [retval]=-1;
+    [processtable+ 9]=0;
+    SP =[processtable+13];
+    ireturn;
+  endif;
+  alias inodetable R11;
+  alias rootfile R12;
+  alias permission R13;
+  permission = [[PTBR+2*(userSP-3)/512]*512 + (userSP -3)%512];
+  rootfile = ROOT_FILE+freentry*8;
+  inodetable = INODE_TABLE+freentry*16;
+  [inodetable + 1] = filename;
+  [inodetable + 0] = DATA;
+  [inodetable + 2] = 0;
+  [inodetable + 3] = [processtable+3];
+  [inodetable + 4] = permission;
+  counter =5;
+  while(counter<16) do
+       [inodetable+counter]=-1;
+       counter =counter+1;
+  endwhile;
+  [rootfile+0] = filename;
+  [rootfile+1] = 0;
+  [rootfile+2] = DATA;
+  [rootfile+3] = [USER_TABLE+2*[processtable+3]];
+  [rootfile+4] = permission;
+  counter =5;
+  while(counter<8) do
+       [rootfile+counter]=-1;
+       counter = counter +1;
+  endwhile;
+  [retval]=0;
+  [processtable + 9]=0;
+  SP =[processtable+13];
+  ireturn;
+endif;
+
+if(syscall ==4) then
+   alias counter R3;
+   alias entry R5;
+   counter =0;
+   while(counter<60) do
+       if([INODE_TABLE+counter*16+1] == filename) then
+            entry = counter;
+            break;
+       endif;
+   counter = counter+1;
+   endwhile;
+
+   if(counter==60)then
+     [retval] = 0;
+     [processtable + 9]=0;
+     SP =[processtable+13];
+     ireturn;
+   endif; 
+   if([INODE_TABLE+entry*16]!=DATA)then
+     [retval] = -1;
+     [processtable + 9]=0;
+     SP =[processtable+13];
+     ireturn;
+   endif;
+   if([INODE_TABLE+entry*16+4]==0) then
+       if([processtable+3]!=1 && [processtable+3]!=[INODE_TABLE+entry*16+3]) then
+     [retval] = -1;
+     [processtable+ 9]=0;
+     SP =[processtable+13];
+     ireturn;
+     endif;
+   endif;
+   multipush(R0,R1,R2,R3,R4,R5,R7,R9);
+   R1 = 4;
+   R2 = entry;
+   R3 = [SYSTEM_STATUS_TABLE+1];
+   call RESOURCE_MANAGER;
+
+   if([FILE_STATUS_TABLE+R2*4+1]!=-1) then
+     R1 = 5;
+     R3 = [SYSTEM_STATUS_TABLE+1];
+     call RESOURCE_MANAGER;
+     multipop(R0,R1,R2,R3,R4,R5,R7,R9);
+     [retval] = -2;
+     [processtable+ 9]=0;
+     SP =[processtable+13];
+     ireturn;
+    endif;
+    multipop(R0,R1,R2,R3,R4,R5,R7,R9);
+    counter =8;
+    alias cnt R6;
+    while(counter<12)do
+         if([INODE_TABLE+entry*16+counter]!=-1)then
+            cnt =0;
+            while(cnt<4)do
+                  if([BUFFER_TABLE+cnt*4]==[INODE_TABLE+entry*16+counter]) then
+                      if([BUFFER_TABLE+cnt*4+1]==1)then
+                         [BUFFER_TABLE+cnt*4+1]=0;
+                         multipush(R0,R1,R2,R3,R4,R5,R6,R7,R9);
+                         R1 = 4;
+                         R2 = [BUFFER_TABLE+cnt*4];
+                         R3 = [SYSTEM_STATUS_TABLE+1];
+                         call MEMORY_MANAGER;
+                                   multipop(R0,R1,R2,R3,R4,R5,R6,R7,R9);                         
+                       endif;
+                   endif;
+            cnt=cnt+1;
+            endwhile;
+         endif;
+         counter = counter+1;
+    endwhile;
+    [INODE_TABLE+entry*16+1]=-1;
+    [ROOT_FILE+entry*8+1]=-1;
+     multipush(R7,R9);
+     R1 = 5;
+     R2 = entry;
+     R3 = [SYSTEM_STATUS_TABLE+1];
+     call RESOURCE_MANAGER;
+     multipop(R7,R9);
+     [retval]=0;
+     [processtable+ 9]=0;
+     SP =[processtable+13];
+
+     ireturn;
+endif;    
