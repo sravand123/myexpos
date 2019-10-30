@@ -16,7 +16,6 @@ pid= [SYSTEM_STATUS_TABLE+1];
 
 
 if(EC!=0 || (userSP == PTLR*512-1)) then
-   print "Error";
    multipush(R0,R1,R4,R5);
    R1=3;
    R2 = [SYSTEM_STATUS_TABLE+1];

@@ -17,6 +17,8 @@ cd spl
 ./spl spl_progs/int4.spl
 ./spl spl_progs/int10.spl
 ./spl spl_progs/int8.spl
+./spl spl_progs/int5.spl
+./spl spl_progs/file_manager.spl
 ./spl spl_progs/int11.spl
 ./spl spl_progs/int15.spl
 ./spl spl_progs/int13.spl
@@ -51,3 +53,6 @@ cd ../xfs-interface
 ./xfs-interface  
 cd ../xsm
 ./xsm    --timer 1024
+cd ../xfs-interface 
+./xfs-interface  
+

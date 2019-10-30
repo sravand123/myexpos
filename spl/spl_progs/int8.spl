@@ -77,8 +77,13 @@ counter = 0;
 while(counter<8) do
      [newperprocesstable+2*counter] = [parentperprocess+2*counter];
      [newperprocesstable+2*counter+1] = [parentperprocess+2*counter+1];
+     alias k R10;
+     k = [parentperprocess+2*counter+1]*4+1;
      if([parentperprocess+2*counter]==SEMAPHORE)then
-         [SEMAPHORE_TABLE+[parentperprocess+2*counter+1]*4+1]= [SEMAPHORE_TABLE+[parentperprocess+2*counter+1]*4+1]+1;
+         [SEMAPHORE_TABLE+k]= [SEMAPHORE_TABLE+k]+1;
+     endif;
+     if([parentperprocess+2*counter]==FILE)then
+         [OPEN_FILE_TABLE+k] = [OPEN_FILE_TABLE+k]+1;
      endif;
     counter=counter+1;
 endwhile;

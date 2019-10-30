@@ -143,8 +143,20 @@ if(syscall ==4) then
          endif;
          counter = counter+1;
     endwhile;
-    [INODE_TABLE+entry*16+1]=-1;
-    [ROOT_FILE+entry*8+1]=-1;
+    counter = 0;
+    alias inodetable R11;
+    alias rootfile R12;
+    inodetable = INODE_TABLE+entry*16;
+    rootfile = ROOT_FILE+entry*8;
+    
+  [inodetable + 1] = -1;
+  [inodetable + 0] = -1;
+  [inodetable + 2] = 0;
+  [inodetable + 3] = -1;
+  [rootfile+0] = -1;
+
+
+
      multipush(R7,R9);
      R1 = 5;
      R2 = entry;

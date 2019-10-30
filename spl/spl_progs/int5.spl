@@ -1,0 +1,63 @@
+alias userSP R0;
+alias syscall  R1;
+userSP = SP;
+
+syscall = [[PTBR + 2 * ((userSP - 5) / 512)] * 512 + (userSP - 5) % 512];
+alias filename R2;
+alias retval R3;
+alias processtable R4;
+alias perprocess R5;
+processtable = PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16;
+retval = [PTBR+2*(userSP-1)/512]*512 + (userSP -1)%512;
+perprocess = [processtable+11]*512+496;
+filename = [[PTBR+2*(userSP-4)/512]*512 + (userSP -4)%512];
+[processtable+13] =SP;
+[processtable + 9] =syscall;
+SP = [processtable+ 11]*512-1;
+alias counter R10;
+counter = 0;
+if(syscall == 2) then
+  alias fentry R6;
+  alias openentry R7;
+  while(counter<16)do
+       if([perprocess+counter]==-1)then
+            fentry = counter;
+            break;
+      endif;
+  counter = counter +1;
+  endwhile;
+  multipush(R0,R1,R2,R3,R4,R5,R6);
+  R1 = 3;
+  R2 = filename;
+  call FILE_MANAGER;
+  openentry = R0;
+  multipop(R0,R1,R2,R3,R4,R5,R6);
+  
+  [perprocess+fentry] = FILE;
+  [perprocess+fentry+1] = openentry;
+  SP = [processtable+13];
+  [processtable+9]=0;
+  [retval] = fentry;
+  ireturn;
+endif;
+
+
+if(syscall == 3) then
+   if(filename <0 || filename >7 || [perprocess+filename]!=FILE) then
+      SP = [processtable+13];
+      [processtable+9]=0;
+      [retval]= -1;
+      ireturn;
+   endif;
+   multipush(R0,R1,R2,R3,R4,R5);
+   R1 = 4;
+   R2 = [perprocess+filename+1];
+   call FILE_MANAGER;
+   multipop(R0,R1,R2,R3,R4,R5);
+   [perprocess+filename] = -1;
+   SP = [processtable+13];
+   [processtable+9]=0;
+   [retval] = 0;
+   ireturn;
+endif;
+   

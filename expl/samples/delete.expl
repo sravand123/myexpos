@@ -5,9 +5,9 @@ decl
     string file;
 enddecl
 begin
-
-    temp = exposcall("Delete","abc.dat");
-
+    write("FILE NAME");
+    read(file);
+    temp = exposcall("Delete",file);
     return 0;
 end
 }

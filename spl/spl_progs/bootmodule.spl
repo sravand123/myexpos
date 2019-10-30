@@ -44,6 +44,10 @@ loadi(31,44);
 loadi(10,23);
 loadi(11,24);
 loadi(62,5);
+loadi(12,25);
+loadi(13,26);
+loadi(46,59);
+loadi(47,60);
 
 PTBR = PAGE_TABLE_BASE + 20;
 PTLR = 10;
@@ -143,6 +147,13 @@ while(counter<4)do
   [BUFFER_TABLE+counter*4+3]=-1;  
 counter = counter+1;
 endwhile;    
+
+counter = 0;
+while(counter<32)do
+  [OPEN_FILE_TABLE+counter*4+0]=-1;
+  [OPEN_FILE_TABLE+counter*4+1]=0;
+counter=counter+1;
+endwhile;
 [SYSTEM_STATUS_TABLE+2]=45;
 [SYSTEM_STATUS_TABLE+3]=0;
 [TERMINAL_STATUS_TABLE+0]=0;

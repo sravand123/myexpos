@@ -131,5 +131,40 @@ if(functionNum==5)then
   endwhile;
   R0 = 0;
   return;
-endif;     
+endif; 
+
+//Acquire Buffer
+
+if(functionNum==1)then
+   alias buffernum R2;
+   alias pid  R3;
+   while([BUFFER_TABLE+buffernum*4+2]!=-1)do
+        [PROCESS_TABLE+pid*16+4]=WAIT_BUFFER;
+        [PROCESS_TABLE+pid*16+4]=buffernum;
+        call MOD_5;
+   endwhile;
+   [BUFFER_TABLE+buffernum*4+2]=pid;
+   return;
+endif;
+
+
+//Release Buffer
+if(functionNum==2) then
+   alias buffernum R2;
+   alias pid  R3;
+   alias counter R4;
+   if([BUFFER_TABLE+buffernum*4+2]!=pid)then
+      R0=-1;
+      return;
+   endif;
+   [BUFFER_TABLE+buffernum*4+2]=-1;
+   counter = 0;
+   while(counter<16)do
+   if([PROCESS_TABLE+pid*16+4]==WAIT_BUFFER && [PROCESS_TABLE+pid*16+5]==buffernum)then
+      [PROCESS_TABLE+pid*16+4]=READY;
+   endif;
+   counter = counter+1;
+   endwhile;
+   return;
+endif;
             
