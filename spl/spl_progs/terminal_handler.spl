@@ -103,7 +103,7 @@ if(functionNum==4)then
          call MOD_5;
          multipop(R0,R1,R2,R3);
    endwhile;
-  if([FILE_STATUS_TABLE+inodeindex*4+1]==-1) then
+  if([INODE_TABLE+inodeindex*16]==-1) then
       R0=-1;
       return;
   endif;
@@ -136,20 +136,27 @@ endif;
 //Acquire Buffer
 
 if(functionNum==1)then
+
    alias buffernum R2;
    alias pid  R3;
+
    while([BUFFER_TABLE+buffernum*4+2]!=-1)do
         [PROCESS_TABLE+pid*16+4]=WAIT_BUFFER;
         [PROCESS_TABLE+pid*16+4]=buffernum;
+
+        multipush(R1,R2,R3);
         call MOD_5;
+        multipop(R1,R2,R3);
    endwhile;
    [BUFFER_TABLE+buffernum*4+2]=pid;
+   R0=0;
    return;
 endif;
 
 
 //Release Buffer
 if(functionNum==2) then
+
    alias buffernum R2;
    alias pid  R3;
    alias counter R4;
@@ -160,8 +167,8 @@ if(functionNum==2) then
    [BUFFER_TABLE+buffernum*4+2]=-1;
    counter = 0;
    while(counter<16)do
-   if([PROCESS_TABLE+pid*16+4]==WAIT_BUFFER && [PROCESS_TABLE+pid*16+5]==buffernum)then
-      [PROCESS_TABLE+pid*16+4]=READY;
+   if([PROCESS_TABLE+counter*16+4]==WAIT_BUFFER && [PROCESS_TABLE+counter*16+5]==buffernum)then
+      [PROCESS_TABLE+counter*16+4]=READY;
    endif;
    counter = counter+1;
    endwhile;

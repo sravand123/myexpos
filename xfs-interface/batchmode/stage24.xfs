@@ -31,6 +31,10 @@ load --exec ../expl/samples/delete.xsm
 load --exec ../expl/samples/primes.xsm
 load --exec ../expl/samples/merge.xsm
 load --exec ../expl/samples/linked.xsm
+load --exec ../expl/samples/24.xsm
+load --data ../sample.dat
+load --data ../numbers.dat
+load --exec ../expl/samples/lseek.xsm
 load --exec ../expl/samples/oddnums.xsm
 exit
 

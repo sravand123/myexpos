@@ -19,7 +19,7 @@ load --module 2 ../spl/spl_progs/memory_manager.xsm
 load --module 1 ../spl/spl_progs/process_manager.xsm
 load --int=console ../spl/spl_progs/console_interrupt.xsm
 load --int=disk ../spl/spl_progs/disk_interrupt.xsm
-load --init ../expl/samples/ass_shell.xsm
+load --init ../expl/samples/shell4.xsm
 load --exec ../expl/samples/pid.xsm
-
+load --exec ../expl/samples/shellf.xsm
 exit

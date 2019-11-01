@@ -47,7 +47,9 @@ cd ../expl
 ./expl samples/rw.expl
 ./expl samples/pid.expl
 ./expl samples/merge.expl
-./expl samples/ass_shell.expl
+./expl samples/shellf.expl
+./expl samples/lseek.expl
+./expl samples/24.expl
 
 cd ../xfs-interface 
 ./xfs-interface  

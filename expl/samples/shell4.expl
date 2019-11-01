@@ -19,7 +19,7 @@ begin
                 temp = exposcall("Wait",pid);
             else
                 temp = exposcall("Exec",input);
-                write(temp);
+
                 if(temp != 0) then
                     temp = exposcall("Write",-2, "BAD COMMAND");
                     break;

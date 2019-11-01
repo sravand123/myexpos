@@ -1,10 +1,11 @@
 alias functionnum R1;
-
+//open
 if(functionnum==3) then
   alias filename R2;
   alias counter R3;
   alias inodeentry R4;
   alias openentry R5;
+
   counter = 0;
   while(counter<60)do
       if([INODE_TABLE+counter*16+1]==filename)then
@@ -14,6 +15,7 @@ if(functionnum==3) then
      counter = counter +1;
   endwhile;
   if(counter == 60) then
+
     R0 =-1;
     return;
   endif;
@@ -24,6 +26,7 @@ if(functionnum==3) then
   call RESOURCE_MANAGER;
   multipop(R1,R2,R3,R4);
   if(R0==-1)then
+
     return;
   endif;
   if([INODE_TABLE+inodeentry*16]==EXEC)then
@@ -33,12 +36,13 @@ if(functionnum==3) then
 	  R3 = [SYSTEM_STATUS_TABLE+1];
 	  call RESOURCE_MANAGER;
 	  multipop(R1,R2,R3,R4);
+
           R0=-1;
           return;
   endif;
   counter = 0;
   while(counter<32) do
-    if([OPEN_FILE_TABLE+counter*4]!=-1)then
+    if([OPEN_FILE_TABLE+counter*4]==-1)then
         openentry = counter;
         break;
     endif;
@@ -51,6 +55,7 @@ if(functionnum==3) then
 	  R3 = [SYSTEM_STATUS_TABLE+1];
 	  call RESOURCE_MANAGER;
 	  multipop(R1,R2,R3,R4);
+
           R0=-2;
           return;
   endif;
@@ -58,7 +63,7 @@ if(functionnum==3) then
      [OPEN_FILE_TABLE+openentry*4]=INODE_ROOT;
   else
      if([FILE_STATUS_TABLE+inodeentry*4+1]==-1)then
-        [FILE_STATUS_TABLE+inodeentry*4+1]=0;
+        [FILE_STATUS_TABLE+inodeentry*4+1]=1;
      else
      [FILE_STATUS_TABLE+inodeentry*4+1]=[FILE_STATUS_TABLE+inodeentry*4+1]+1;
      endif;
@@ -73,8 +78,11 @@ if(functionnum==3) then
 	  call RESOURCE_MANAGER;
   multipop(R1,R2,R3,R4);
   R0=openentry;
+
   return;
 endif;
+
+//close
 if(functionnum==4)then
    alias fileindex R2;
    alias inodeindex R3;
@@ -86,7 +94,7 @@ if(functionnum==4)then
       [openfiletable+0]=-1;
       [openfiletable+1]=-1;
       [openfiletable+2]=-1;
-      if([INODE_TABLE+inodeindex*6]!=ROOT)then
+      if([openfiletable]!=INODE_ROOT)then
          [FILE_STATUS_TABLE+inodeindex*4+1]=[FILE_STATUS_TABLE+inodeindex*4+1]-1;
       endif;
       if([FILE_STATUS_TABLE+inodeindex*4+1]==0)then
@@ -97,11 +105,13 @@ if(functionnum==4)then
    return;
 endif;
 
+//Buffered read
 if(functionnum == 2)then
    alias block R2;
    alias offset R3;
    alias word_address R4;
    alias buffernum R5;
+
    buffernum = block%4;
    multipush(R0,R1,R2,R3,R4,R5);
    R1 =1;
@@ -109,12 +119,14 @@ if(functionnum == 2)then
    R3= [SYSTEM_STATUS_TABLE+1];
    call RESOURCE_MANAGER;
    multipop(R0,R1,R2,R3,R4,R5);
+
+
    if([BUFFER_TABLE+buffernum*4]!=block)then
       if([BUFFER_TABLE+buffernum*4+1]==1)then
          multipush(R0,R1,R2,R3,R4,R5);
          R1 =1;
          R3 = 71+buffernum;
-         R4  =block;
+         R4  =[BUFFER_TABLE+buffernum*4];
          R2 = [SYSTEM_STATUS_TABLE+1];
          call DEVICE_MANAGER;
          multipop(R0,R1,R2,R3,R4,R5);
@@ -130,7 +142,7 @@ if(functionnum == 2)then
      [BUFFER_TABLE+buffernum*4] = block;
   
    endif;
-   [word_address] = [71+buffernum*512+offset];
+   [word_address] = [(71+buffernum)*512+offset];
    multipush(R0,R1,R2,R3,R4,R5);
    R1 =2;
    R2 = buffernum;
