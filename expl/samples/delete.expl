@@ -5,7 +5,7 @@ decl
     string file;
 enddecl
 begin
-    write("FILE NAME");
+    write("==FILE==");
     read(file);
     temp = exposcall("Delete",file);
     return 0;

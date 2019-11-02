@@ -11,6 +11,28 @@ if([SYSTEM_STATUS_TABLE+1]!=1 && [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+3]!=1
    ireturn;
 endif;
 
+
+
+multipush(R0);
+  R1 = 5;
+  R2 = [SYSTEM_STATUS_TABLE+1];
+  call PROCESS_MANAGER;
+multipop(R0);
+alias counter R5;
+counter = 0;
+while(counter<4)do
+  if([BUFFER_TABLE+counter*4+1]==1 && [BUFFER_TABLE+counter*4]!=-1)then
+multipush(R0,R5);
+     R1=1;
+     R2  = [SYSTEM_STATUS_TABLE+1];
+     R3 = 71+counter;
+     R4 = [BUFFER_TABLE+counter*4];
+     call DEVICE_MANAGER;
+multipop(R0,R5);
+  endif;
+ counter= counter+1;
+endwhile;
+
 multipush(R0);
 R1 = 1;
 R2 = [SYSTEM_STATUS_TABLE+1];

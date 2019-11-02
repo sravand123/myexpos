@@ -115,6 +115,7 @@ endif;
 //release inode
 if(functionNum==5)then
    alias inodeindex R2;
+
    alias pid R3;
    if(pid != [FILE_STATUS_TABLE+inodeindex*4])then
       R0=-1;

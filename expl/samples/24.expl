@@ -11,10 +11,13 @@ begin
     temp = exposcall("Read",-1,filename);
     filedis  = exposcall("Open",filename);
     a= 0;
+
     if(filedis>=0)then
     while(a!=-2)  do
 	 a = exposcall("Read",filedis,data);
+         if(a!=-2)then
 	 temp = exposcall("Write",-2,data);
+         endif;
     endwhile; 
    endif;
     return 0;

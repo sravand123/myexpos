@@ -19,7 +19,9 @@ begin
         while(a != -2)  do
             temp = exposcall("SemLock", semid);
             a = exposcall("Read",filedis,data);
+            if(a!=-2)then
             temp = exposcall("Write",-2,data);
+            endif;
             temp = exposcall("SemUnLock", semid);
         endwhile;
         
@@ -28,7 +30,9 @@ begin
         while(a != -2)  do
             temp = exposcall("SemLock", semid);
             a = exposcall("Read",filedis,data);
+            if(a!=-2)then
             temp = exposcall("Write",-2,data);
+            endif;
             temp = exposcall("SemUnLock", semid);
         endwhile;
 

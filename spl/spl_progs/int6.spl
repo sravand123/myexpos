@@ -52,7 +52,7 @@ else
         multipop(R0,R1,R2,R3,R4,R5,R6,R7,R8);
 
         if([OPEN_FILE_TABLE+openentry*4]==INODE_ROOT)then
-           if(lseek>=480)then
+           if([lseek]==480)then
                multipush(R0,R1,R2,R3,R4,R5,R6,R7,R8);
                 R1 = 5;
                 R2 = inodeentry;
@@ -89,13 +89,14 @@ else
         call FILE_MANAGER;
         multipop(R0,R1,R2,R3,R4,R5,R6,R7,R8);
         [lseek]=[lseek]+1;
-         multipush(R0,R1,R2,R3,R4,R5,R6,R7,R8);
+         
+       endif;
+              multipush(R0,R1,R2,R3,R4,R5,R6,R7,R8);
                 R1 = 5;
                 R2 = inodeentry;
                 R3 = [SYSTEM_STATUS_TABLE+1];
                 call RESOURCE_MANAGER;
                multipop(R0,R1,R2,R3,R4,R5,R6,R7,R8);
-       endif;
     else
         SP = userSP;
         [processtable + 9] = 0;

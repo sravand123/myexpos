@@ -127,7 +127,51 @@ if(functionNum==1) then
  endif;
  return;
 endif; 
-         
+
+
+//kill all
+
+if(functionNum==5) then
+   alias counter R4;
+   alias pid R2;
+   counter = 0;
+   while(counter<60)do
+    if([INODE_TABLE+counter*16+0]!=-1)then
+
+      multipush(R1,R2,R4);
+       R1 = 4;
+       R3 = pid;
+       R2 = counter;
+       call RESOURCE_MANAGER;
+      multipop(R1,R2,R4); 
+   endif;
+   counter = counter+1;
+   endwhile;
+  counter = 2;
+  while(counter<16)do
+    if(pid!=counter && [PROCESS_TABLE+counter*16+4]!=TERMINATED)then
+       multipush(R1,R2,R4);      
+       R1=3;
+       R2 =pid;
+       call PROCESS_MANAGER;
+       multipop(R1,R2,R4);
+    endif;
+    counter = counter+1;
+  endwhile;
+  counter = 0;
+   while(counter<60)do
+    if([INODE_TABLE+counter*16+0]!=-1)then
+      multipush(R1,R2,R4);
+       R1 = 5;
+       R3 = pid;
+       R2 = counter;
+       call RESOURCE_MANAGER;
+      multipop(R1,R2,R4); 
+   endif;
+   counter = counter+1;
+   endwhile;
+   return;
+endif;
     
     
    

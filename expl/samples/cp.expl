@@ -1,0 +1,34 @@
+
+
+decl
+    int i,k, semid, pid, data, temp, filedis1,b,filedis2, a;
+    string filename1,filename2;
+enddecl
+
+int main()
+{
+begin
+    write("==FROM==");
+    temp = exposcall("Read",-1,filename1);
+    filedis1  = exposcall("Open",filename1);
+    write("==TO==");
+    temp = exposcall("Read",-1,filename2);
+    filedis2  = exposcall("Open",filename2);    
+    a= 0;
+
+    if(filedis1>=0)then
+    while(a!=-2)  do
+	 a = exposcall("Read",filedis1,data);
+         if(a!=-2)then
+	 b = exposcall("Write",filedis2,data);
+         endif;
+         if(b<0)then
+          break;
+          endif;
+    endwhile; 
+   endif;
+    return 0;
+end
+}
+
+

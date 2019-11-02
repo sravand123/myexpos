@@ -1,24 +1,132 @@
-[PROCESS_TABLE + [SYSTEM_STATUS_TABLE + 1] * 16 + 9] = 5;
 alias userSP R0;
 userSP = SP;
-[PROCESS_TABLE + ( [SYSTEM_STATUS_TABLE + 1] * 16) + 13] = SP;
-SP = [PROCESS_TABLE + ([SYSTEM_STATUS_TABLE + 1] * 16) + 11] * 512 - 1;
-alias fileDescriptor R1;
+alias pid R1; 
+pid = [SYSTEM_STATUS_TABLE+1];
+alias processtable R2;
+processtable  =PROCESS_TABLE+pid*16;
+[processtable+ 9] = 5;
+[processtable + 13] = SP;
+SP = [processtable+ 11] * 512 - 1;
+alias fileDescriptor R3;
 fileDescriptor = [[PTBR + 2 * ((userSP - 4) / 512)] * 512 + ((userSP - 4) % 512)];
-if (fileDescriptor != -2)
-then
-         [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + ((userSP - 1) % 512)]=-1;
-else
+alias retval R4;
+retval  = [PTBR + 2 * ((userSP - 1) / 512)] * 512 + ((userSP - 1) % 512);
+alias perprocesstable R5;
+perprocesstable = [processtable+ 11] * 512+496;
 
-        multipush(R0,R1);
+if (fileDescriptor == -2)
+then
+
+        multipush(R0,R1,R2,R3,R4,R5);
         R1=3;
         R2 = [SYSTEM_STATUS_TABLE + 1];
         R3= [[PTBR + 2 * ((userSP - 3) / 512)] * 512 + ((userSP - 3) % 512)];
-        call MOD_4;
-        multipop(R0,R1);
-        [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + ((userSP - 1) % 512)]=0;
+        call DEVICE_MANAGER;
+        multipop(R0,R1,R2,R3,R4,R5);
+        [retval]=0;
+else
+
+    if(fileDescriptor>=0 && fileDescriptor<=7)then
+      if([perprocesstable+2*fileDescriptor]==-1 || [perprocesstable+2*fileDescriptor]!=FILE)then
+
+          [retval] =-1;
+      else
+            
+	      alias openentry R6;
+	      alias inodeentry R7;
+	      openentry  = [perprocesstable+2*fileDescriptor+1];
+	      inodeentry = [OPEN_FILE_TABLE+4*openentry+0];
+              alias inodetable R8;
+              alias opentable R9;
+              alias function_ret R10;
+              alias lseek R11;
+              inodetable = INODE_TABLE+inodeentry*16;
+              opentable = OPEN_FILE_TABLE+openentry*4;
+              if([inodetable+4]==0 && [processtable+3]!=1 && [processtable+3]!=[INODE_TABLE+inodeentry*16+3])then
+
+                  [retval] = -3;
+              else
+                  multipush(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9);
+
+                    R3 = pid;
+                    R2 = inodeentry;
+                    R1 = 4;
+                    call RESOURCE_MANAGER;
+                    function_ret = R0;
+                  multipop(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9);
+                  if(function_ret==-1)then
+
+                     [retval]=-1;
+                  else
+
+                      lseek = OPEN_FILE_TABLE+4*openentry+2;
+                      if([lseek]==MAX_FILE_SIZE)then
+
+                      multipush(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11);
+                      R2 = pid;
+                      R3 = inodeentry;
+		      R1 = 5;
+                      call RESOURCE_MANAGER;
+                      multipop(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11);
+                        
+                      [retval]=-2;
+                      else
+                          if([lseek]%512==0 && [lseek]==[inodetable+2])then
+
+                             multipush(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11);   
+                             R1 = 3;
+                             call MEMORY_MANAGER;                        
+                             function_ret = R0;        
+                             multipop(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11);
+                             if(function_ret==-1)then
+
+                                 multipush(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11);
+                                 R3 = pid;
+                                 R2 = inodeentry;
+		                 R1 = 5;
+                                 call RESOURCE_MANAGER;
+                                 multipop(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11);
+                                 [retval] = -2;
+				 SP = [processtable + 13];
+				 [processtable+ 9] = 0;
+				 ireturn;
+                             endif;                                     
+
+                                 [inodetable+8+[lseek]/512]=function_ret;
+                             endif;    
+                                 multipush(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11);
+
+                                   R1 = 1;
+                                   R2 = [inodetable+8+[lseek]/512];
+                                   R3 = [lseek]%512;
+                                   R4 = [[PTBR + 2 * ((userSP - 3) / 512)] * 512 + ((userSP - 3) % 512)];
+                                   call FILE_MANAGER;
+                                 multipop(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11); 
+                                 if([lseek]==[inodetable+2])then
+                                  [ROOT_FILE+inodeentry*8+1]=[ROOT_FILE+inodeentry*8+1]+1;
+                                  [inodetable+2]=[inodetable+2]+1;
+                                 endif; 
+                                 [lseek] = [lseek]+1;
+ 				  multipush(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11);
+
+				 R3 = pid;
+				 R2 = inodeentry;
+				 R1 = 5;
+				 call RESOURCE_MANAGER;
+				 multipop(R0,R1,R2,R3,R4,R5,R6,R7,R8,R9,R11);
+				 [retval] =0;       
+                          endif;    
+                      endif;
+              
+                  
+          endif;
+      endif; 
+    else 
+      [retval]=-1;
+    endif;
 endif;
-SP = [PROCESS_TABLE + ( [SYSTEM_STATUS_TABLE + 1] * 16) + 13];
-[PROCESS_TABLE + [SYSTEM_STATUS_TABLE + 1] * 16 + 9] = 0;
+
+SP = [processtable + 13];
+[processtable+ 9] = 0;
 ireturn;
 

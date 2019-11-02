@@ -42,6 +42,12 @@ cd ../expl
 ./expl samples/linked2.expl
 ./expl samples/child.expl
 ./expl samples/parent.expl
+./expl samples/ls.expl
+./expl samples/25mer.expl
+./expl samples/25rw.expl
+./expl samples/cat.expl
+./expl samples/rm.expl
+./expl samples/cp.expl
 ./expl samples/create.expl
 ./expl samples/delete.expl
 ./expl samples/rw.expl
