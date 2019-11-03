@@ -34,6 +34,7 @@ load --exec ../expl/samples/linked.xsm
 load --exec ../expl/samples/24.xsm
 load --data ../sample.dat
 load --data ../numbers.dat
+load --data ../abc.dat
 load --exec ../expl/samples/lseek.xsm
 load --exec ../expl/samples/ls.xsm
 load --exec ../expl/samples/cp.xsm

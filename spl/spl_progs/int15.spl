@@ -1,8 +1,8 @@
 [PROCESS_TABLE + [SYSTEM_STATUS_TABLE + 1] * 16 + 9] = 21;
-alias userSP R0;
-userSP = SP;
 [PROCESS_TABLE + ( [SYSTEM_STATUS_TABLE + 1] * 16) + 13] = SP;
 SP = [PROCESS_TABLE + ([SYSTEM_STATUS_TABLE + 1] * 16) + 11] * 512 - 1;
+alias userSP R0;
+userSP = [PROCESS_TABLE + ( [SYSTEM_STATUS_TABLE + 1] * 16) + 13];
 
 if([SYSTEM_STATUS_TABLE+1]!=1 && [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+3]!=1)then
    [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + ((userSP - 1) % 512)]=-1;
@@ -20,6 +20,7 @@ multipush(R0);
 multipop(R0);
 alias counter R5;
 counter = 0;
+breakpoint;
 while(counter<4)do
   if([BUFFER_TABLE+counter*4+1]==1 && [BUFFER_TABLE+counter*4]!=-1)then
 multipush(R0,R5);

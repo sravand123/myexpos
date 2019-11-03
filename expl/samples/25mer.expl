@@ -28,7 +28,7 @@ int store(str file, int start)
     //Close the file
     x=exposcall("Close", fp);
 
-
+    write("Stored");
     return 0;
   end
 }

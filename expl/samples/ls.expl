@@ -13,10 +13,7 @@ begin
     if(filedis>=0)then
     while(a!=-2)  do
 	 a = exposcall("Read",filedis,data);
-         if(data==-1)then
-           break;
-         endif;
-         if(a!=-2)then
+         if(a!=-2 AND data!=-1)then
 	 temp = exposcall("Write",-2,data);
          endif;
          b = exposcall("Seek",filedis,7);

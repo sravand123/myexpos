@@ -94,6 +94,7 @@ if(functionNum==3)then
    counter = DISK_FREE_AREA;
    while(counter<DISK_SWAP_AREA)do
        if([DISK_FREE_LIST+counter]==0)then
+          [DISK_FREE_LIST+counter]=1;
           R0 = counter;
           return;
        endif;

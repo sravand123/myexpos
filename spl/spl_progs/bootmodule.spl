@@ -142,7 +142,7 @@ endwhile;
 counter = 0;
 while(counter<4)do
   [BUFFER_TABLE+counter*4+0]=-1;
-  [BUFFER_TABLE+counter*4+1]=-1;
+  [BUFFER_TABLE+counter*4+1]=0;
   [BUFFER_TABLE+counter*4+2]=-1;
   [BUFFER_TABLE+counter*4+3]=-1;  
 counter = counter+1;

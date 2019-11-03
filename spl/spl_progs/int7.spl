@@ -1,12 +1,12 @@
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 13] = SP;
+SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 11] * 512 - 1;
 alias userSP R0;
-userSP = SP;
+userSP =[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16 + 13];
 alias pid R1; 
 pid = [SYSTEM_STATUS_TABLE+1];
 alias processtable R2;
 processtable  =PROCESS_TABLE+pid*16;
 [processtable+ 9] = 5;
-[processtable + 13] = SP;
-SP = [processtable+ 11] * 512 - 1;
 alias fileDescriptor R3;
 fileDescriptor = [[PTBR + 2 * ((userSP - 4) / 512)] * 512 + ((userSP - 4) % 512)];
 alias retval R4;
