@@ -23,6 +23,9 @@ cd spl
 ./spl spl_progs/int15.spl
 ./spl spl_progs/int13.spl
 ./spl spl_progs/int14.spl
+./spl spl_progs/int16.spl
+./spl spl_progs/int12.spl
+./spl spl_progs/int17.spl
 ./spl spl_progs/stage18_int9.spl
 ./spl spl_progs/disk_interrupt.spl
 ./spl spl_progs/stage19_int9.spl
@@ -37,12 +40,17 @@ cd ../expl
 ./expl samples/shell2.expl
 ./expl samples/shell3.expl
 ./expl samples/shell4.expl
+./expl samples/extshell.expl
+./expl samples/login.expl
 ./expl samples/shell23.expl
 ./expl samples/linked.expl
 ./expl samples/linked2.expl
 ./expl samples/child.expl
 ./expl samples/parent.expl
 ./expl samples/ls.expl
+./expl samples/lu.expl
+./expl samples/ru.expl
+
 ./expl samples/25mer.expl
 ./expl samples/25rw.expl
 ./expl samples/cat.expl

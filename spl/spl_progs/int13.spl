@@ -19,7 +19,7 @@ if(syscall==17) then
            [perprocesstable+2*counter]=1;
            break;
         endif;
-   counter =counter+2;
+   counter =counter+1;
    endwhile;
 
    if(counter==8)then

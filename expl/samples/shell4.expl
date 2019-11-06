@@ -15,9 +15,12 @@ begin
                 temp = exposcall("Write",-2, "Fork Failure");
                 continue;
             endif;
+
             if(pid != 0) then
+                breakpoint;
                 temp = exposcall("Wait",pid);
             else
+                breakpoint;
                 temp = exposcall("Exec",input);
 
                 if(temp != 0) then

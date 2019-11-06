@@ -52,20 +52,20 @@ if(syscall==1)then
   [inodetable + 3] = [processtable+3];
   [inodetable + 4] = permission;
   counter =5;
-  while(counter<16) do
-       [inodetable+counter]=-1;
-       counter =counter+1;
-  endwhile;
+//   while(counter<16) do
+//        [inodetable+counter]=-1;
+//        counter =counter+1;
+//   endwhile;
   [rootfile+0] = filename;
   [rootfile+1] = 0;
   [rootfile+2] = DATA;
   [rootfile+3] = [USER_TABLE+2*[processtable+3]];
   [rootfile+4] = permission;
-  counter =5;
-  while(counter<8) do
-       [rootfile+counter]=-1;
-       counter = counter +1;
-  endwhile;
+//   counter =5;
+//   while(counter<8) do
+//        [rootfile+counter]=-1;
+//        counter = counter +1;
+//   endwhile;
   [retval]=0;
   [processtable + 9]=0;
   SP =[processtable+13];
@@ -149,12 +149,18 @@ if(syscall ==4) then
     inodetable = INODE_TABLE+entry*16;
     rootfile = ROOT_FILE+entry*8;
     
-  [inodetable + 1] = -1;
-  [inodetable + 0] = -1;
-  [inodetable + 2] = 0;
-  [inodetable + 3] = -1;
-  [rootfile+0] = -1;
-
+    counter =0;
+  while(counter<8) do
+       [rootfile+counter]=-1;
+       counter = counter +1;
+  endwhile;
+  [rootfile+1]=0;
+  counter = 0;
+  while(counter<16) do
+       [inodetable+counter]=-1;
+       counter =counter+1;
+  endwhile;
+  [inodetable+2]=0;
 
 
      multipush(R7,R9);

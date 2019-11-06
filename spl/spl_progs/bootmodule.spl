@@ -1,53 +1,122 @@
+//Exception handler
 loadi(2, 15);
 loadi(3, 16);
+
+//Timer
 loadi(4, 17);
 loadi(5, 18);
+
+//Write
 loadi(16,29);
 loadi(17,30);
+//exit
 loadi(22,35);
 loadi(23,36);
+
+//scheduler
 loadi(50,63);
 loadi(51,64);
+
+//Library
 loadi(63,13);
 loadi(64,14);
+
+//Init
 loadi(65,7);
-loadi(66,8);
+
+//Resource manager
 loadi(40,53);
 loadi(41,54);
+
+//Device manager
 loadi(48,61);
 loadi(49,62);
+
+//Read
 loadi(14,27);
 loadi(15,28);
+
+//console interrupt
 loadi(8,21);
 loadi(9,22);
+
+//Int9
 loadi(20,33);
 loadi(21,34);
+
+//process manager
 loadi(42,55);
 loadi(43,56);
+
+//Memory manager
 loadi(44,57);
 loadi(45,58);
+
+//Inode table,user table
 loadi(59,3);
 loadi(60,4);
+
+//Disk interrupt
 loadi(6,19);
 loadi(7,20);
+
+//Disk free list
 loadi(61,2);
+
+//INT8
 loadi(18,31);
 loadi(19,32);
+
+//INT11
 loadi(24,37);
 loadi(25,38);
+
+//INT15
 loadi(32,45);
 loadi(33,46);
+
+//INT13
 loadi(28,41);
 loadi(29,42);
+
+//INT14
 loadi(30,43);
 loadi(31,44);
+
+//INT4
 loadi(10,23);
 loadi(11,24);
+
+//Root file
 loadi(62,5);
+
+//INT5
 loadi(12,25);
 loadi(13,26);
+
+//File manager
 loadi(46,59);
 loadi(47,60);
+
+//INT 12
+loadi(26,39);
+loadi(27,40);
+
+//INT 17
+loadi(36,49);
+loadi(37,50);
+
+
+
+//Shell
+loadi(67,9);
+loadi(68,10);
+
+//INT16
+
+loadi(34,47);
+loadi(35,48);
+
 
 PTBR = PAGE_TABLE_BASE + 20;
 PTLR = 10;
@@ -55,70 +124,104 @@ PTLR = 10;
 [PTBR+1] = "0100";
 [PTBR+2] = 64;
 [PTBR+3] = "0100";
-[PTBR+4] = 78;
-[PTBR+5] = "0110";
-[PTBR+6] = 79;
-[PTBR+7] = "0110";
+[PTBR+4] = -1;
+[PTBR+5] = "0000";
+[PTBR+6] = -1;
+[PTBR+7] = "0000";
 [PTBR+8] = 65;
 [PTBR+9] = "0100";
-[PTBR+10] = 66;
-[PTBR+11] = "0100";
+[PTBR+10] = -1;
+[PTBR+11] = "0000";
 [PTBR+12] = -1;
 [PTBR+13] = "0000";
 [PTBR+14] = -1;
 [PTBR+15] = "0000";
-[PTBR+16] = 76;
+[PTBR+16] = 66;
 [PTBR+17] = "0110";
-[PTBR+18] = 77;
-[PTBR+19] = "0110";
+[PTBR+18] = -1;
+[PTBR+19] = "0000";
 
 
 
 [PROCESS_TABLE +17] = 1;
 [PROCESS_TABLE+19]=1;
 [PROCESS_TABLE +20] = CREATED;
-[PROCESS_TABLE +27] = 80;
+[PROCESS_TABLE +27] = 77;
 [PROCESS_TABLE +28] = 0;
 [PROCESS_TABLE +29] = 8*512;
 [PROCESS_TABLE +30] = PAGE_TABLE_BASE+20;
 [PROCESS_TABLE +31] = 10;
-[76*512] = [65 * 512 + 1];
+[66*512] = [65 * 512 + 1];
 
 
-[DISK_MAP_TABLE+2]=[PTBR+4];
-[DISK_MAP_TABLE+3]=[PTBR+6];
-[DISK_MAP_TABLE+4]=[PTBR+8];
-[DISK_MAP_TABLE+5]=[PTBR+10];
-[DISK_MAP_TABLE+6]=[PTBR+12];
-[DISK_MAP_TABLE+7]=[PTBR+14];
-[DISK_MAP_TABLE+8]=[PTBR+16];
-[DISK_MAP_TABLE+9]=[PTBR+18];
 
+
+PTBR = PAGE_TABLE_BASE + 40;
+PTLR = 10;
+[PTBR+0] = 63;
+[PTBR+1] = "0100";
+[PTBR+2] = 64;
+[PTBR+3] = "0100";
+[PTBR+4] = -1;
+[PTBR+5] = "0000";
+[PTBR+6] = -1;
+[PTBR+7] = "0000";
+[PTBR+8] = 67;
+[PTBR+9] = "0100";
+[PTBR+10] = 68;
+[PTBR+11] = "0100";
+[PTBR+12] = -1;
+[PTBR+13] = "0000";
+[PTBR+14] = -1;
+[PTBR+15] = "0000";
+[PTBR+16] = 78;
+[PTBR+17] = "0110";
+[PTBR+18] = 79;
+[PTBR+19] = "0110";
+
+
+
+[PROCESS_TABLE +16+17] = 2;
+[PROCESS_TABLE+16+19]=1;
+[PROCESS_TABLE+16+18]=1;
+[PROCESS_TABLE +16+20] = TERMINATED;
+[PROCESS_TABLE +16+27] = 80;
+[PROCESS_TABLE +16+28] = 0;
+[PROCESS_TABLE +16+29] = 8*512;
+[PROCESS_TABLE +16+30] = PAGE_TABLE_BASE+40;
+[PROCESS_TABLE +16+31] = 10;
+[78*512] = [67 * 512 + 1];
 
 
 alias counter R14;
-counter = ((PTBR-PAGE_TABLE_BASE)/20)+1;
+
+
+[DISK_MAP_TABLE+20+4] = 9;
+[DISK_MAP_TABLE+20+5] = 10;
+
+
+
+counter = 3;
 while(counter < MAX_PROC_NUM)do
       [PROCESS_TABLE+(counter*16)+4] = TERMINATED;
       counter = counter +1;
 endwhile;                    
 
 counter=0;
-while(counter<83) do 
+while(counter<81) do 
      [MEMORY_FREE_LIST+counter]=1;
 counter =counter+1;
 endwhile;
 
 
-[MEMORY_FREE_LIST+63] =2;
-[MEMORY_FREE_LIST+64] =2;
+
 
 
 //Initialize per-process resource table                                                   
 counter = 496;                                                            
 while(counter < 512) do                                                   
     [[PROCESS_TABLE+27] * 512 + counter] = -1;                        
-    [[PROCESS_TABLE+27] * 512 + counter + 1] = -1;                       
+    [[PROCESS_TABLE+27] * 512 + counter + 1] =-1;                       
     counter = counter + 2;
 endwhile;
 
@@ -154,7 +257,7 @@ while(counter<32)do
   [OPEN_FILE_TABLE+counter*4+1]=0;
 counter=counter+1;
 endwhile;
-[SYSTEM_STATUS_TABLE+2]=45;
+[SYSTEM_STATUS_TABLE+2]=47;
 [SYSTEM_STATUS_TABLE+3]=0;
 [TERMINAL_STATUS_TABLE+0]=0;
 [DISK_STATUS_TABLE+0]=0;

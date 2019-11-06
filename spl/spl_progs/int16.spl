@@ -1,0 +1,183 @@
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13]  = SP;
+SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11]*512-1;
+alias userSP R0;
+userSP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
+alias processtable R1;
+alias syscall R6;
+syscall =  [[PTBR+2*(userSP-5)/512]*512+(userSP-5)%512];
+processtable = PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16;
+alias ret_val R2;
+ret_val =  [PTBR+2*(userSP-1)/512]*512+(userSP-1)%512;
+[processtable+9] = syscall;
+
+if(syscall==22)then
+alias username R3;
+alias password R7;
+username  =  [[PTBR+2*(userSP-4)/512]*512+(userSP-4)%512];
+password =  [[PTBR+2*(userSP-3)/512]*512+(userSP-3)%512];
+
+alias userentry R4;
+
+
+if([SYSTEM_STATUS_TABLE]!=1 || [SYSTEM_STATUS_TABLE+1]!=2 ) then
+    [processtable+9]=0;
+   SP = [processtable+13];
+   [ret_val] = -2;
+   ireturn;
+endif;
+
+alias counter R8;
+counter  = 0;
+while(counter<16)do
+  if([USER_TABLE+counter*2]==username)then 
+   [processtable+9]=0;
+   SP = [processtable+13];
+   [ret_val] = -2;
+   ireturn;
+endif;
+counter = counter+1;
+endwhile;
+
+counter  = 0;
+while(counter<16)do
+  if([USER_TABLE+counter*2]==-1)then 
+            userentry = counter;
+            break;
+endif;
+counter = counter+1;
+endwhile;
+if(counter==16)then
+    [processtable+9]=0;
+   SP = [processtable+13];
+   [ret_val] = -3;
+   ireturn;
+endif;
+
+encrypt password;
+
+[USER_TABLE+userentry*2+1] = password;
+[USER_TABLE+userentry*2] =username;
+
+
+[ret_val] = 0;
+
+endif;
+
+if (syscall==23) then
+ alias user R3;
+ user  = [[PTBR+2*(userSP-4)/512]*512+(userSP-4)%512];
+ if([SYSTEM_STATUS_TABLE]!=1 || [SYSTEM_STATUS_TABLE+1]!=2 ) then
+    [processtable+9]=0;
+   SP = [processtable+13];
+   [ret_val] = -2;
+   ireturn;
+endif;
+if(user==0 || user==1)then
+ [processtable+9]=0;
+   SP = [processtable+13];
+   [ret_val] = -2;
+   ireturn;
+endif;
+alias counter R4;
+counter  = 0;
+while(counter<16)do
+  if([USER_TABLE+counter*2]==user)then 
+   [USER_TABLE+counter*2]=-1;
+   [USER_TABLE+counter*2+1]=-1;
+endif;
+counter = counter+1;
+endwhile;
+
+counter  = 0;
+while (counter<60) do
+    if([ROOT_FILE+counter*8+3]==user)then
+            [processtable+9]=0;
+            SP = [processtable+13];
+            [ret_val] = -3;
+            ireturn;
+     endif;
+    counter=counter+1;
+endwhile;
+[ret_val] = 0;
+endif;
+
+if(syscall==24)then
+alias username R3;
+alias password R4;
+username  =  [[PTBR+2*(userSP-4)/512]*512+(userSP-4)%512];
+password =  [[PTBR+2*(userSP-3)/512]*512+(userSP-3)%512];
+
+alias userentry R8;
+   if([SYSTEM_STATUS_TABLE+1]!=2)then
+       [processtable+9]=0;
+       SP = [processtable+13];
+       [ret_val] = -1;
+      ireturn;
+   endif;
+alias counter R5;
+counter  = 0;
+while(counter<16)do
+  if([USER_TABLE+counter*2]==username)then 
+    userentry = counter;
+   break;
+endif;
+counter = counter+1;
+endwhile;
+if(counter==16)then
+     [processtable+9]=0;
+       SP = [processtable+13];
+       [ret_val] = -2;
+      ireturn;
+endif;
+if([processtable+3]!=userentry)then
+   if([SYSTEM_STATUS_TABLE]!=1)then
+         [processtable+9]=0;
+       SP = [processtable+13];
+       [ret_val] = -1;
+      ireturn; 
+   endif;
+endif;
+encrypt password;
+[USER_TABLE+2*userentry+1] = password;
+[ret_val] = 0;
+endif;
+
+if(syscall==26)then
+   alias username R3;
+   username  =  [[PTBR+2*(userSP-4)/512]*512+(userSP-4)%512];
+    alias counter R4;
+    counter  = 0;
+    while(counter<16)do
+    if([USER_TABLE+counter*2]==username)then 
+        [processtable+9]=0;
+       SP = [processtable+13];
+       [ret_val] = counter;
+      ireturn; 
+    endif;
+    counter = counter+1;
+    endwhile;
+    [ret_val] = -1;
+endif;
+
+if(syscall==25)then
+   alias userid R3;
+   userid= [[PTBR+2*(userSP-4)/512]*512+(userSP-4)%512];
+   if(userid<0 || userid>15)then
+       [ret_val] = -1;
+   else
+   if([USER_TABLE+userid*2]==-1)then
+      [processtable+9]=0;
+       SP = [processtable+13];
+       [ret_val] = -1;
+      ireturn;   
+   endif;
+  
+   [ret_val] = [USER_TABLE+userid*2];
+   endif;
+
+endif;
+
+
+[processtable+9]=0;
+ SP = [processtable+13];
+ireturn;   

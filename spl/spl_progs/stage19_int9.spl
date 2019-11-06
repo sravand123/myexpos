@@ -47,6 +47,7 @@ else
    [MEMORY_FREE_LIST+userareapage]=[MEMORY_FREE_LIST+userareapage]+1;
    [SYSTEM_STATUS_TABLE+2]=[SYSTEM_STATUS_TABLE+2]-1;
     
+   SP = [PROCESS_TABLE + ([SYSTEM_STATUS_TABLE + 1] * 16) + 11] * 512 - 1;
    alias perProcRecOff R7;                                                      
    perProcRecOff = 496;                                                           
 
@@ -59,8 +60,8 @@ while(perProcRecOff < 512) do
 endwhile;
 
 
-
-   SP = [PROCESS_TABLE + ([SYSTEM_STATUS_TABLE + 1] * 16) + 11] * 512 - 1;
+   [PROCESS_TABLE+pid*16+7]=index;
+     [PROCESS_TABLE+pid*16+1]=pid;
    [PROCESS_TABLE+pid*16+4]=RUNNING;
    [PAGE_TABLE_BASE+pid*20+0] = 63;
    [PAGE_TABLE_BASE+pid*20+1] = "0100";

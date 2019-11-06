@@ -10,6 +10,7 @@ int main()
 begin
     filedis  = exposcall("Open","root");
     a= 0;
+    breakpoint;
     if(filedis>=0)then
     while(a!=-2)  do
 	 a = exposcall("Read",filedis,data);
