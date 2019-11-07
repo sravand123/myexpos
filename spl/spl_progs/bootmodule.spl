@@ -257,7 +257,7 @@ while(counter<32)do
   [OPEN_FILE_TABLE+counter*4+1]=0;
 counter=counter+1;
 endwhile;
-[SYSTEM_STATUS_TABLE+2]=47;
+[SYSTEM_STATUS_TABLE+2]=45;
 [SYSTEM_STATUS_TABLE+3]=0;
 [TERMINAL_STATUS_TABLE+0]=0;
 [DISK_STATUS_TABLE+0]=0;

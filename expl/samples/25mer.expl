@@ -14,7 +14,7 @@ int store(str file, int start)
 
   begin
     //Create and open the file
-    x=exposcall("Create", file);
+    x=exposcall("Create", file,1);
     fp=exposcall("Open", file, 1);
 
     //Store the numbers into the file
@@ -93,7 +93,7 @@ int merge(str out, str in1, str in2)
     x=exposcall("Delete", in1);
     x=exposcall("Delete", in2);
 
-    write("Merged");
+    //write("Merged");
     return 0;
   end
 }
