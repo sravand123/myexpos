@@ -1,16 +1,14 @@
 #! /bin/sh
 cd spl
-./spl spl_progs/halt_prog.spl 
 ./spl spl_progs/os_startup.spl 
 ./spl spl_progs/timer.spl 
 ./spl spl_progs/schedule_module.spl 
 ./spl spl_progs/bootmodule.spl 
 ./spl spl_progs/device_manager.spl
 ./spl spl_progs/int7.spl
-./spl spl_progs/terminal_handler.spl
+./spl spl_progs/resource_manager.spl
 ./spl spl_progs/console_interrupt.spl
 ./spl spl_progs/int6.spl
-./spl spl_progs/stage15_bootmodule.spl
 ./spl spl_progs/memory_manager.spl
 ./spl spl_progs/process_manager.spl
 ./spl spl_progs/int9.spl
@@ -26,9 +24,7 @@ cd spl
 ./spl spl_progs/int16.spl
 ./spl spl_progs/int12.spl
 ./spl spl_progs/int17.spl
-./spl spl_progs/stage18_int9.spl
 ./spl spl_progs/disk_interrupt.spl
-./spl spl_progs/stage19_int9.spl
 ./spl spl_progs/exception_handler.spl
 
 cd ../expl

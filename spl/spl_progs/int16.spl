@@ -72,7 +72,7 @@ if (syscall==23) then
    [ret_val] = -2;
    ireturn;
 endif;
-if(user==0 || user==1)then
+if(user=="root" || user=="kernel")then
  [processtable+9]=0;
    SP = [processtable+13];
    [ret_val] = -2;
