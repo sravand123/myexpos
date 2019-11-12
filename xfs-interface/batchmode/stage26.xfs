@@ -33,7 +33,6 @@ load --exec ../expl/samples/evennums.xsm
 load --exec ../expl/samples/create.xsm
 load --exec ../expl/samples/delete.xsm
 load --exec ../expl/samples/primes.xsm
-load --exec ../expl/samples/merge.xsm
 load --exec ../expl/samples/linked.xsm
 load --exec ../expl/samples/24.xsm
 load --data ../sample.dat
